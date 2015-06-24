@@ -24,6 +24,7 @@ var app = express();
 var path = require('path');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+
 var cassandra = new require('cassandra-driver');
 var client = new cassandra.Client({ contactPoints: ['localhost'] });
 
@@ -74,8 +75,3 @@ io.on('connection', function(socket) {
 		});
 	});
 });
-
-
-	// client.execute('SELECT * FROM test', function(err, totalCount) {
-	// 	console.log(totalCount);
-	// });
