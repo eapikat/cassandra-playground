@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Cassandra Playground</title>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var serverName = 'localhost';
+		var socket = undefined;
+		$(function() {
+			socket = io('http://' + serverName, { 'transports' : ['websocket'] });
+
+			socket.on('getKeyspaces', function(data) {
+				$('#selKeyspaces').empty();
+				for (var i = 0; i < data.keyspaces.length; i++) {
+					$('#selKeyspaces').append('<option value="' + data.keyspaces[i] + '">' + data.keyspaces[i] + '</option>');
+				}
+
+				$('#selKeyspaces').val($('#selKeyspaces option:first').val());
+				$('#selKeyspaces').val($('#selKeyspaces').val()).trigger('change');
+			});
+
+			socket.on('getResults', function(data) {
+				console.log(data);
+			});
+
+			socket.on('getTables', function(data) {
+				$('#selTables').empty();
+				for (var i = 0; i < data.tables.length; i++) {
+					$('#selTables').append('<option value="' + data.tables[i] + '">' + data.tables[i] + '</option>');
+				}
+
+				$('#selTables').val($('#selTables option:first').val());
+				$('#selTables').val($('#selTables').val()).trigger('change');
+			});
+
+			socket.on('connected', function(data) {
+				socket.emit('getKeyspaces');
+			});
+
+			$('#selKeyspaces').on('change', function() {
+				socket.emit('getTables', { keyspace: $('#selKeyspaces').val() });
+			});
+		});
+
+		function runQuery() {
+			var qstr = $('#txtQuery').val();
+			socket.emit('runQuery', { query: qstr });
+		}
+
+	</script>
+	<style type="text/css">
+		#divBrowser {
+			border-right: 5px;
+			bottom: -20px;
+			left: 0;
+			position: absolute;
+			top: 20px;
+			width: 250px;
+		}
+
+		#divQuery {
+			background-color: : #cccccc;
+			bottom: -20px;
+			left: 250px;
+			position: absolute;
+			top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div id="divBrowser">
+		<div>Keyspaces: <select id="selKeyspaces"></select></div>
+		<div>Tables: <select id="selTables"></select></div>
+	</div>
+	<div id="divQuery">
+		<textarea id="txtQuery" rows="5" cols="140">SELECT * FROM eerotest.test;</textarea>
+		<button onclick="runQuery()">Run Query</button>
+	</div>
+</body>
+</html>

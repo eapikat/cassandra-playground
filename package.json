@@ -1,0 +1,19 @@
+{
+	"author": {
+		"name": "Eero Pikat",
+		"email": "eero.pikat@barchart.com",
+		"url": "http://www.barchart.com"
+	},
+	"name": "cassandra-playground",
+	"description": "node.js playground for Cassandra server",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app"
+	},
+	"dependencies": {
+		"express": "~4.9.0",
+		"socket.io": "~1.0.0",
+		"cassandra-driver" : ">=2.1.0"
+	}
+}
